@@ -23,9 +23,28 @@ function validateDropdowns() {
   let kNotSel = parseInt(selectKNotSel.value)
   let x = parseInt(selectX.value)
 
+  const errors = []
+
+  if (n >= x) errors.push(`O valor de n (${n}) deve ser menor que x (${x}).`)
+  if (k >= n) errors.push(`O valor de k (${k}) deve ser menor que n (${n}).`)
+  if (kNotSel >= x - n)
+    errors.push(
+      `O valor de kNotSel (${kNotSel}) deve ser menor que x - n (${x - n}).`
+    )
+
+  // Exibir erros
+  const errorDiv = document.getElementById("errorMessages")
+  if (errors.length > 0) {
+    errorDiv.innerHTML = errors.map((e) => `<p>${e}</p>`).join("")
+    // Não atualizar valores nem gerar grid para evitar inconsistências
+    return false
+  } else {
+    errorDiv.innerHTML = ""
+  }
+
+  // Se estiver tudo certo, ajusta os valores se necessário
   if (n >= x) n = x - 1
   if (k >= n) k = n - 1
-
   const notSelCount = x - n
   if (kNotSel >= notSelCount) kNotSel = Math.max(1, notSelCount - 1)
 
@@ -35,7 +54,10 @@ function validateDropdowns() {
 
   generateGrid(x)
   updateCombinationPreview()
+
+  return true
 }
+
 
 function generateGrid(x) {
   grid.innerHTML = ""
@@ -258,3 +280,8 @@ selectX.value = 25
 
 validateDropdowns()
 updateCombinationPreview()
+selectN.addEventListener("change", validateDropdowns)
+selectK.addEventListener("change", validateDropdowns)
+selectKNotSel.addEventListener("change", validateDropdowns)
+selectX.addEventListener("change", validateDropdowns)
+
