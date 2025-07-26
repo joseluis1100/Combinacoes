@@ -1,0 +1,146 @@
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  text-align: center;
+  max-width: 1000px;
+  width: 90%;
+}
+
+.controls {
+  margin-bottom: 20px;
+}
+
+.controls label {
+  margin: 0 10px;
+  display: inline-block;
+}
+
+select {
+  padding: 5px 10px;
+  font-size: 16px;
+}
+
+.grid {
+  display: grid;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px auto;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  max-width: 500px;
+}
+
+#preview {
+  margin: 10px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+
+.grid button {
+  width: 50px;
+  height: 50px;
+  font-size: 16px;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  border-radius: 5px;
+}
+
+.grid button:hover {
+  background: #bbb;
+}
+
+.grid button.selected {
+  background: #4caf50;
+  color: white;
+}
+
+.grid button:active {
+  transform: scale(0.95);
+}
+
+.actions {
+  margin: 20px 0;
+}
+
+.actions button {
+  padding: 10px 15px;
+  margin: 0 10px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  background: #2196f3;
+  color: white;
+  border-radius: 5px;
+  transition: background 0.3s ease, transform 0.1s ease;
+}
+
+.actions button:hover {
+  background: #1976d2;
+}
+
+.actions button:active {
+  transform: scale(0.97);
+}
+
+#spreadsheetContainer {
+  margin-top: 30px;
+  overflow-x: auto;
+}
+
+#spreadsheetContainer table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  background: white;
+}
+
+#spreadsheetContainer th,
+#spreadsheetContainer td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  min-width: 40px;
+}
+
+.tabs {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background: #eee;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 5px 5px 0 0;
+}
+
+.tab-button.active {
+  background: #fff;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-content {
+  display: none;
+  background: white;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.tab-content.active {
+  display: block;
+}
+

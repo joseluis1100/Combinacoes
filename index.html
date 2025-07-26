@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerador de Combinações</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Gerador de Combinações</h1>
+      <div class="controls">
+        <label
+          >Quantidade a selecionar (n):
+          <select id="selectN">
+            <option>15</option>
+          </select>
+        </label>
+        <label
+          >Tamanho das combinações (k):
+          <select id="selectK">
+            <option>10</option>
+          </select>
+        </label>
+        <label
+          >Quantidade de botões (x):
+          <select id="selectX">
+            <option>25</option>
+          </select>
+        </label>
+        <label
+          >Combinação dos não selecionados (k):
+          <select id="selectKNotSel"></select>
+        </label>
+      </div>
+
+      <div id="buttonGrid" class="grid"></div>
+      <p id="preview"></p>
+
+      <div class="actions">
+        <button id="generate">Gerar Combinações</button>
+        <button id="export">Exportar para XLSX</button>
+        <button id="random">Combinação Aleatória</button>
+      </div>
+      <div id="randomOutput" style="margin-top: 20px; font-weight: 600"></div>
+      <div id="spreadsheetContainer">
+        <p id="summary"></p>
+
+        <div class="tabs">
+          <button class="tab-button active" data-tab="selected">
+            Combinações Selecionados
+          </button>
+          <button class="tab-button" data-tab="notSelected">
+            Combinações Não Selecionados
+          </button>
+        </div>
+
+        <div id="tab-selected" class="tab-content active"></div>
+        <div id="tab-notSelected" class="tab-content"></div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
