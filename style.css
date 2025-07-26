@@ -144,3 +144,68 @@ select {
   display: block;
 }
 
+@media (max-width: 600px) {
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .controls label {
+    display: block;
+    margin: 10px 0;
+  }
+
+  select {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+    gap: 8px;
+  }
+
+  .grid button {
+    width: 100%;
+    max-width: 50px;
+    height: 45px;
+    font-size: 14px;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .actions button {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  #spreadsheetContainer {
+    overflow-x: auto;
+  }
+
+  #spreadsheetContainer table {
+    font-size: 14px;
+    min-width: 400px;
+  }
+
+  .tabs {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tab-button {
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+  }
+
+  #preview {
+    font-size: 14px;
+    padding: 0 10px;
+  }
+}
