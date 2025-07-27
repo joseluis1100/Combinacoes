@@ -1,34 +1,62 @@
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border 0.2s ease;
+}
+/* Fonte e fundo */
 body {
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
-  background: #f4f4f4;
+  background: linear-gradient(135deg, #e3f2fd, #f1f8e9);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   min-height: 100vh;
+  padding: 30px 15px;
 }
 
+/* Container principal */
 .container {
   text-align: center;
   max-width: 1000px;
-  width: 90%;
+  width: 100%;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
 }
 
+/* Controle de seleções */
 .controls {
   margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
 }
 
 .controls label {
-  margin: 0 10px;
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 15px;
+  gap: 5px;
+  min-width: 140px;
 }
 
 select {
-  padding: 5px 10px;
+  padding: 6px 12px;
   font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border 0.3s ease;
 }
 
+select:focus {
+  border-color: #2196f3;
+  outline: none;
+}
+
+/* Grade de botões */
 .grid {
   display: grid;
   justify-content: center;
@@ -38,13 +66,6 @@ select {
   max-width: 500px;
 }
 
-#preview {
-  margin: 10px 0;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-
 .grid button {
   width: 50px;
   height: 50px;
@@ -52,8 +73,8 @@ select {
   border: none;
   background: #ddd;
   cursor: pointer;
-  transition: background 0.3s ease;
-  border-radius: 5px;
+  border-radius: 6px;
+  transition: background 0.3s ease, transform 0.1s ease;
 }
 
 .grid button:hover {
@@ -69,19 +90,23 @@ select {
   transform: scale(0.95);
 }
 
+/* Ações */
 .actions {
   margin: 20px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
 }
 
 .actions button {
-  padding: 10px 15px;
-  margin: 0 10px;
+  padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
   border: none;
   background: #2196f3;
   color: white;
-  border-radius: 5px;
+  border-radius: 6px;
   transition: background 0.3s ease, transform 0.1s ease;
 }
 
@@ -93,16 +118,28 @@ select {
   transform: scale(0.97);
 }
 
+/* Preview de combinações */
+#preview {
+  margin: 10px 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* Tabela e planilha */
 #spreadsheetContainer {
   margin-top: 30px;
   overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
 }
 
 #spreadsheetContainer table {
   width: 100%;
   border-collapse: collapse;
   text-align: center;
-  background: white;
+  font-size: 15px;
 }
 
 #spreadsheetContainer th,
@@ -112,11 +149,13 @@ select {
   min-width: 40px;
 }
 
+/* Abas */
 .tabs {
   margin-top: 20px;
   display: flex;
   justify-content: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .tab-button {
@@ -125,58 +164,70 @@ select {
   border: none;
   cursor: pointer;
   font-weight: 600;
-  border-radius: 5px 5px 0 0;
+  border-radius: 6px 6px 0 0;
+  transition: background 0.3s ease;
 }
 
 .tab-button.active {
-  background: #fff;
+  background: #ffffff;
   border-bottom: 2px solid transparent;
 }
 
 .tab-content {
   display: none;
   background: white;
-  padding: 10px;
+  padding: 15px;
   border: 1px solid #ccc;
+  border-radius: 0 0 8px 8px;
+  animation: fadeIn 0.3s ease;
 }
 
 .tab-content.active {
   display: block;
 }
 
-@media (max-width: 600px) {
+/* Animação de transição */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsivo para telas menores */
+@media (max-width: 768px) {
   .controls {
-    display: flex;
     flex-direction: column;
     align-items: center;
   }
 
   .controls label {
-    display: block;
-    margin: 10px 0;
-  }
-
-  select {
     width: 100%;
     max-width: 300px;
   }
 
+  select {
+    width: 100%;
+  }
+
   .grid {
     grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
-    gap: 8px;
+    max-width: 100%;
+    padding: 0 10px;
   }
 
   .grid button {
-    width: 100%;
-    max-width: 50px;
     height: 45px;
-    font-size: 14px;
+    font-size: 15px;
   }
 
   .actions {
-    display: flex;
     flex-direction: column;
-    gap: 10px;
+    align-items: center;
   }
 
   .actions button {
@@ -184,28 +235,22 @@ select {
     max-width: 300px;
   }
 
-  #spreadsheetContainer {
-    overflow-x: auto;
-  }
-
-  #spreadsheetContainer table {
-    font-size: 14px;
-    min-width: 400px;
-  }
-
-  .tabs {
-    flex-direction: column;
-    align-items: center;
-  }
-
   .tab-button {
     width: 100%;
     max-width: 300px;
-    text-align: center;
+  }
+
+  .tab-content {
+    font-size: 14px;
+  }
+
+  #spreadsheetContainer table {
+    min-width: 500px;
+    font-size: 14px;
   }
 
   #preview {
-    font-size: 14px;
     padding: 0 10px;
+    font-size: 15px;
   }
 }
