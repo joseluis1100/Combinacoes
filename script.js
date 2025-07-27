@@ -135,9 +135,13 @@ function renderTable(dataSel, dataNotSel, selectedNums, allNums) {
     for (let i = 0; i < data[0].length; i++) {
       html += `<th>n${i + 1}</th>`
     }
-    html += "</tr></thead><tbody>"
+    html += "<th>Soma</th></tr></thead><tbody>"
     data.forEach((row) => {
-      html += "<tr>" + row.map((n) => `<td>${n}</td>`).join("") + "</tr>"
+      const soma = row.reduce((a, b) => a + b, 0)
+      html +=
+        "<tr>" +
+        row.map((n) => `<td>${n}</td>`).join("") +
+        `<td>${soma}</td></tr>`
     })
     html += "</tbody></table>"
     return html
@@ -238,12 +242,14 @@ document.getElementById("export").addEventListener("click", () => {
   const combDataSel = combSel.map((row) => {
     const obj = {}
     row.forEach((val, i) => (obj[`n${i + 1}`] = val))
+    obj["Soma"] = row.reduce((a, b) => a + b, 0)
     return obj
   })
 
   const combDataNotSel = combNotSel.map((row) => {
     const obj = {}
     row.forEach((val, i) => (obj[`n${i + 1}`] = val))
+    obj["Soma"] = row.reduce((a, b) => a + b, 0)
     return obj
   })
 
