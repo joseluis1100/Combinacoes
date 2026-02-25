@@ -3,67 +3,586 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gerador de Combinações</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
+    <title>Fechamento e Combinações</title>
+
     <link rel="stylesheet" href="style.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+      /* --- Visual do Botão Toggle (Liga/Desliga) --- */
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+        margin: 0;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+      input:checked + .slider {
+        background-color: #4caf50; /* Verde quando ativado */
+      }
+      input:checked + .slider:before {
+        transform: translateX(20px);
+      }
+
+      /* --- Visual dos Blocos de Filtro --- */
+      .filters-container-modern {
+        max-width: 850px; /* Aumentado para acomodar duas colunas */
+        margin: 25px auto;
+        font-family: Arial, sans-serif;
+      }
+      .filter-block {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        background: #fff;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+      .filter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 15px;
+        background-color: #f9f9f9;
+        border-bottom: 1px solid #eee;
+        font-weight: bold;
+        color: #333;
+      }
+      .filter-content {
+        padding: 15px;
+        transition: all 0.3s ease;
+      }
+
+      /* --- A Mágica do Desativado (Aplica SÓ no conteúdo, não no botão) --- */
+      .filter-disabled .filter-content {
+        opacity: 0.4;
+        pointer-events: none; /* Impede cliques */
+        filter: grayscale(100%); /* Fica cinza */
+      }
+
+      /* --- MELHORIA: Grid Responsivo para os Filtros --- */
+      .filters-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        align-items: start;
+      }
+      @media (max-width: 768px) {
+        .filters-grid {
+          grid-template-columns: 1fr; /* Empilha no celular */
+        }
+      }
+    </style>
   </head>
+
   <body>
     <div class="container">
-      <h1>Gerador de Combinações</h1>
-      <div class="controls">
-        <label
-          >Quantidade a selecionar (n):
-          <select id="selectN">
-            <option>15</option>
-          </select>
-        </label>
-        <label
-          >Tamanho das combinações (k):
-          <select id="selectK">
-            <option>10</option>
-          </select>
-        </label>
-        <label
-          >Quantidade de botões (x):
-          <select id="selectX">
-            <option>25</option>
-          </select>
-        </label>
-        <label
-          >Combinação dos não selecionados (k):
-          <select id="selectKNotSel"></select>
-        </label>
-      </div>
-      <div id="errorMessages" style="color: red; margin-bottom: 10px;"></div>
-      <div id="buttonGrid" class="grid"></div>
-      <p id="preview"></p>
+      <h1>Fechamento e Combinações</h1>
 
-      <div class="actions">
-        <button id="generate">Gerar Combinações</button>
-        <button id="export">Exportar para XLSX</button>
-        <button id="random">Combinação Aleatória</button>
+      <div class="main-tabs">
+        <button class="main-tab active" data-view="view-fechamento">
+          Modo Fechamento
+        </button>
+        <button class="main-tab" data-view="view-combinacoes">
+          Modo Combinações
+        </button>
       </div>
-      <div id="randomOutput" style="margin-top: 20px; font-weight: 600"></div>
-      <div id="spreadsheetContainer">
-        <p id="summary"></p>
 
-        <div class="tabs">
-          <button class="tab-button active" data-tab="selected">
-            Combinações Selecionados
+      <div id="view-fechamento" class="view-section active">
+        <div
+          class="fechamento-header"
+          style="
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+          "
+        >
+          <label title="Quantos números terá cada bilhete gerado."
+            >Dezenas/Jogo:
+            <input
+              type="number"
+              id="dezJogo"
+              value="15"
+              min="5"
+              max="25"
+              style="width: 50px"
+            />
+          </label>
+          <label title="O prêmio que você quer garantir (ex: 14 pontos)."
+            >Garantia (Alvo):
+            <input
+              type="number"
+              id="garantia"
+              value="14"
+              min="11"
+              max="15"
+              style="width: 50px"
+            />
+          </label>
+          <label
+            title="Quantos números você precisa acertar para a garantia funcionar."
+            >Condição de Acerto:
+            <input
+              type="number"
+              id="condicaoAcerto"
+              value="15"
+              min="11"
+              max="15"
+              style="width: 50px"
+            />
+          </label>
+        </div>
+
+        <div
+          id="statusFechamento"
+          style="
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #0d47a1;
+          "
+        >
+          Selecione os números no grid para montar seu fechamento.
+        </div>
+
+        <p
+          style="
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            text-align: center;
+          "
+        >
+          <strong>Cliques:</strong> 1x Seleciona (Verde) | 2x Fixo (Azul) | 3x
+          Remove
+        </p>
+
+        <div
+          class="grid-header"
+          style="text-align: center; margin-bottom: 20px"
+        >
+          <button
+            id="clearFechamento"
+            style="
+              background-color: #f44336;
+              color: white;
+              border: none;
+              padding: 8px 15px;
+              border-radius: 4px;
+              cursor: pointer;
+              margin-right: 10px;
+              font-weight: bold;
+            "
+          >
+            Limpar Seleção
           </button>
-          <button class="tab-button" data-tab="notSelected">
-            Combinações Não Selecionados
+          <button
+            id="autoSelectFechamento"
+            style="
+              background-color: #ff9800;
+              color: white;
+              border: none;
+              padding: 8px 15px;
+              border-radius: 4px;
+              cursor: pointer;
+              font-weight: bold;
+            "
+          >
+            Auto-Selecionar
+          </button>
+        </div>
+
+        <div id="matrizFechamento" class="matriz-5x5"></div>
+
+        <div class="filters-container-modern">
+          <h3
+            style="
+              text-align: center;
+              margin-bottom: 15px;
+              border-top: 2px dashed #ccc;
+              padding-top: 25px;
+            "
+          >
+            Painel de Filtros Avançados
+          </h3>
+
+          <div class="filters-grid">
+            <div class="col-esquerda">
+              <div class="filter-block filter-disabled">
+                <div class="filter-header">
+                  <span>Pares e Ímpares</span>
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      class="toggle-filtro"
+                      id="chkFiltroPares"
+                    />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="filter-content">
+                  <div
+                    class="slider-container"
+                    style="
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-between;
+                      gap: 10px;
+                    "
+                  >
+                    <label style="color: #2196f3; font-weight: bold"
+                      >Pares:
+                      <input
+                        type="number"
+                        id="inputPares"
+                        value="7"
+                        min="0"
+                        max="15"
+                        style="width: 50px"
+                      />
+                    </label>
+                    <input
+                      type="range"
+                      id="sliderRatio"
+                      min="0"
+                      max="15"
+                      value="7"
+                      style="flex-grow: 1; margin: 0 10px"
+                    />
+                    <label style="color: #ff9800; font-weight: bold"
+                      >Ímpares:
+                      <input
+                        type="number"
+                        id="inputImpares"
+                        value="8"
+                        min="0"
+                        max="15"
+                        style="width: 50px"
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="filter-block filter-disabled">
+                <div class="filter-header">
+                  <span>Limite de Soma</span>
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      class="toggle-filtro"
+                      id="chkFiltroSoma"
+                    />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div
+                  class="filter-content"
+                  style="display: flex; justify-content: space-around"
+                >
+                  <label style="font-weight: bold; color: #555"
+                    >Mínima:
+                    <input
+                      type="number"
+                      id="fechMinSum"
+                      value="170"
+                      style="width: 70px"
+                    />
+                  </label>
+                  <label style="font-weight: bold; color: #555"
+                    >Máxima:
+                    <input
+                      type="number"
+                      id="fechMaxSum"
+                      value="220"
+                      style="width: 70px"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-direita">
+              <div class="filter-block filter-disabled">
+                <div class="filter-header">
+                  <div style="display: flex; align-items: center; gap: 10px">
+                    <span>Jogo Anterior</span>
+                    <span
+                      id="contadorJogoAnterior"
+                      style="
+                        background: #e2e8f0;
+                        color: #334155;
+                        padding: 3px 8px;
+                        border-radius: 6px;
+                        font-size: 12px;
+                        font-weight: bold;
+                      "
+                      >0/15</span
+                    >
+                  </div>
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      class="toggle-filtro"
+                      id="chkFiltroRepetidas"
+                    />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div class="filter-content">
+                  <p
+                    style="
+                      font-size: 13px;
+                      color: #64748b;
+                      margin-top: 0;
+                      margin-bottom: 12px;
+                      text-align: center;
+                    "
+                  >
+                    Selecione as 15 dezenas do último concurso:
+                  </p>
+
+                  <div
+                    id="matrizJogoAnterior"
+                    class="matriz-5x5"
+                    style="margin-bottom: 15px; gap: 4px"
+                  ></div>
+
+                  <div style="border-top: 1px solid #e2e8f0; padding-top: 15px">
+                    <label
+                      style="
+                        font-size: 14px;
+                        color: #ea580c;
+                        font-weight: bold;
+                        display: block;
+                        margin-bottom: 10px;
+                        text-align: center;
+                      "
+                    >
+                      Quantas dezenas repetir? (Intervalo)
+                    </label>
+                    <div
+                      style="
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        gap: 15px;
+                      "
+                    >
+                      <div style="text-align: center">
+                        <span
+                          style="font-size: 12px; color: #666; display: block"
+                          >Mínimo</span
+                        >
+                        <input
+                          type="number"
+                          id="repMin"
+                          value="8"
+                          min="0"
+                          max="15"
+                          style="
+                            width: 60px;
+                            padding: 6px;
+                            text-align: center;
+                            border: 1px solid #cbd5e1;
+                            border-radius: 4px;
+                            font-weight: bold;
+                          "
+                        />
+                      </div>
+                      <div
+                        style="
+                          font-weight: bold;
+                          color: #cbd5e1;
+                          margin-top: 15px;
+                        "
+                      >
+                        até
+                      </div>
+                      <div style="text-align: center">
+                        <span
+                          style="font-size: 12px; color: #666; display: block"
+                          >Máximo</span
+                        >
+                        <input
+                          type="number"
+                          id="repMax"
+                          value="10"
+                          min="0"
+                          max="15"
+                          style="
+                            width: 60px;
+                            padding: 6px;
+                            text-align: center;
+                            border: 1px solid #cbd5e1;
+                            border-radius: 4px;
+                            font-weight: bold;
+                          "
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top: 25px; text-align: center">
+          <button
+            id="gerarMatrizFechamento"
+            style="
+              background-color: #ff5722;
+              font-size: 18px;
+              padding: 12px 30px;
+              border: none;
+              color: white;
+              border-radius: 5px;
+              cursor: pointer;
+              font-weight: bold;
+              width: 100%;
+              max-width: 400px;
+              box-shadow: 0 4px 6px rgba(255, 87, 34, 0.3);
+            "
+          >
+            Gerar Jogos do Fechamento
+          </button>
+        </div>
+      </div>
+
+      <div id="view-combinacoes" class="view-section" style="display: none">
+        <div class="controls">
+          <label
+            >Selecionar (n):
+            <select id="selectN"></select
+          ></label>
+          <label
+            >Combinações (k):
+            <select id="selectK"></select
+          ></label>
+          <label
+            >Total botões (x):
+            <select id="selectX"></select
+          ></label>
+          <label
+            >Não sel. (k):
+            <select id="selectKNotSel"></select
+          ></label>
+        </div>
+        <div id="errorMessages" style="color: red; margin-bottom: 10px"></div>
+        <div class="grid-header">
+          <button
+            id="clearSelection"
+            style="
+              background-color: #f44336;
+              color: white;
+              border: none;
+              padding: 5px 10px;
+              border-radius: 4px;
+              cursor: pointer;
+            "
+          >
+            Limpar Seleção
+          </button>
+          <button
+            id="autoSelect"
+            style="
+              background-color: #ff9800;
+              color: white;
+              border: none;
+              padding: 5px 10px;
+              border-radius: 4px;
+              cursor: pointer;
+            "
+          >
+            Auto-Selecionar
+          </button>
+        </div>
+        <div id="buttonGrid" class="grid"></div>
+        <p id="preview"></p>
+        <div class="actions">
+          <button id="generate">Gerar Combinações</button>
+          <button id="random">Comb. Aleatória</button>
+          <button id="mixRandom" style="background-color: #9c27b0">
+            Misturar Sel. e Não Sel.
+          </button>
+        </div>
+        <div id="randomOutput" style="margin-top: 20px; font-weight: 600"></div>
+      </div>
+
+      <div id="spreadsheetContainer" style="margin-top: 30px">
+        <div id="summary"></div>
+
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+          "
+        >
+          <h3 style="color: #333; margin: 0">Planilha de Jogos Gerados</h3>
+
+          <button
+            id="exportFechamentoXLSX"
+            style="
+              display: none;
+              background-color: #2e7d32;
+              color: white;
+              border: none;
+              padding: 8px 15px;
+              border-radius: 4px;
+              cursor: pointer;
+              font-weight: bold;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            "
+          >
+            📊 Exportar para XLSX
           </button>
         </div>
 
         <div id="tab-selected" class="tab-content active"></div>
-        <div id="tab-notSelected" class="tab-content"></div>
       </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script src="matrizes.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
